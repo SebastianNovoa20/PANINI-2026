@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Álbum Panini · Mundial 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #C8102E;
+  --gold: #F0A500;
+  --white: #F5F5F0;
+  --gray: #c8e6d0;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Barlow', sans-serif;
+  background: #1e6b3a;
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* BG */
+.bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+.bg-gradient {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 0%, #2e9e56 0%, transparent 65%),
+    radial-gradient(ellipse 60% 50% at 0% 100%, #1a7a3a 0%, transparent 60%),
+    linear-gradient(160deg, #1a6b35 0%, #217a40 40%, #1c5c30 100%);
+}
+.bg-pitch {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg,rgba(0,0,0,0.04) 0px,rgba(0,0,0,0.04) 80px,rgba(255,255,255,0.04) 80px,rgba(255,255,255,0.04) 160px);
+}
+.bg-lines {
+  position: absolute; inset: 0; opacity: 0.05;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 79px,rgba(255,255,255,1) 79px,rgba(255,255,255,1) 80px),
+    repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(255,255,255,1) 79px,rgba(255,255,255,1) 80px);
+}
+.bg-circle {
+  position: absolute; width: 340px; height: 340px; border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.06); top: 50%; left: 50%;
+  transform: translate(-50%,-50%); pointer-events: none;
+}
+.ball { position: absolute; opacity: var(--op,0.12); pointer-events: none; transform: rotate(var(--rot,0deg)); }
+.star { position: absolute; opacity: var(--op,0.25); font-size: var(--sz,14px); color: #FFD166; }
+
+/* LAYOUT */
+.wrapper {
+  position: relative; z-index: 1;
+  max-width: 1080px; margin: 0 auto;
+  padding: 0 16px max(40px,env(safe-area-inset-bottom));
+  padding-left: max(16px,env(safe-area-inset-left));
+  padding-right: max(16px,env(safe-area-inset-right));
+}
+
+/* HEADER */
+header { text-align: center; padding: 32px 0 20px; }
+.trophy-row { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 6px; }
+.trophy-icon { font-size: 2.4rem; filter: drop-shadow(0 0 12px rgba(240,165,0,0.7)); }
+h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.2rem, 7vw, 4.2rem);
+  letter-spacing: 0.06em; color: var(--white); line-height: 1;
+  text-shadow: 0 2px 20px rgba(200,16,46,0.5);
+}
+h1 span { color: var(--gold); text-shadow: 0 0 30px rgba(240,165,0,0.6); }
+.subtitle {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 1rem;
+  font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gray); margin-top: 4px;
+}
+.hosts { display: flex; justify-content: center; gap: 10px; margin-top: 10px; font-size: 1.1rem; }
+.redbar {
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--red), var(--gold), var(--red), transparent);
+  margin: 20px 0; border-radius: 2px;
+}
+
+/* STATS */
+.stats-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
+.stat-card {
+  background: rgba(0,0,0,0.28); border: 0.5px solid rgba(255,255,255,0.18);
+  border-radius: 12px; padding: 12px 22px; text-align: center; min-width: 100px;
+}
+.stat-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray); }
+.stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.05em; line-height: 1.1; }
+.stat-unique .stat-value { color: #fff; }
+.stat-dupe   .stat-value { color: var(--gold); }
+.stat-missing .stat-value { color: #FF6B6B; }
+
+.progress-wrap { margin: 0 0 18px; }
+.progress-bar-bg { height: 8px; background: rgba(0,0,0,0.25); border-radius: 4px; overflow: hidden; }
+.progress-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--red), var(--gold)); transition: width 0.4s ease; width: 0%; }
+.progress-label { text-align: right; font-size: 0.75rem; color: var(--gray); margin-top: 4px; }
+
+/* CONTROLS */
+.controls {
+  display: flex; align-items: flex-end; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 14px; background: rgba(0,0,0,0.28);
+  border: 0.5px solid rgba(255,255,255,0.15); border-radius: 14px;
+  padding: 14px 16px;
+}
+.sel-group { display: flex; flex-direction: column; gap: 3px; }
+.sel-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
+select {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 600;
+  letter-spacing: 0.05em; height: 42px; padding: 0 10px;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 10px; color: var(--white); outline: none; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+}
+select:focus { border-color: var(--gold); background: rgba(240,165,0,0.14); }
+select option { background: #1a4a2e; color: var(--white); }
+#catSel { min-width: 100px; }
+#numSel { min-width: 68px; }
+.sel-preview {
+  font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.08em;
+  color: var(--gold); min-width: 76px; text-align: center; padding-bottom: 4px;
+  text-shadow: 0 0 10px rgba(240,165,0,0.4);
+}
+.btn {
+  height: 42px; padding: 0 18px; border-radius: 10px; border: none;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 0.95rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
+  transition: transform 0.1s, opacity 0.12s;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.btn:active { transform: scale(0.95); }
+.btn-add  { background: var(--red); color: #fff; }
+.btn-add:hover { opacity: 0.88; }
+.btn-remove { background: rgba(255,255,255,0.12); color: var(--white); border: 0.5px solid rgba(255,255,255,0.22); }
+.btn-remove:hover { background: rgba(255,255,255,0.2); }
+.filters { display: flex; gap: 5px; flex-wrap: wrap; }
+.fBtn {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; padding: 7px 12px;
+  border-radius: 8px; border: 0.5px solid rgba(255,255,255,0.18);
+  background: transparent; color: var(--gray); cursor: pointer;
+  transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+}
+.fBtn:hover { color: var(--white); border-color: rgba(255,255,255,0.35); }
+.fBtn.active { background: var(--gold); color: #1a2e0a; border-color: var(--gold); }
+
+/* LEGEND */
+.legend { display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+.leg-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--gray); }
+.leg-dot { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; }
+.leg-none { background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.28); }
+.leg-have { background: rgba(255,255,255,0.42); border: 1px solid rgba(255,255,255,0.6); }
+.leg-dupe { background: rgba(240,165,0,0.65); border: 1px solid rgba(240,165,0,0.9); }
+
+/* GRID OUTER */
+#grid {
+  display: flex; flex-direction: column; gap: 0;
+  max-height: 580px; overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+#grid::-webkit-scrollbar { width: 4px; }
+#grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+/* GROUP ZONES */
+.gz-special, .group-zone {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 4px;
+  border-radius: 10px;
+  padding: 6px 8px 10px;
+  margin: 6px 0 2px;
+}
+.gz-special { background: rgba(240,165,0,0.14); border: 0.5px solid rgba(240,165,0,0.3); }
+.gz-0  { background: rgba(200,16,46,0.20);   border: 0.5px solid rgba(200,16,46,0.4); }
+.gz-1  { background: rgba(240,165,0,0.20);   border: 0.5px solid rgba(240,165,0,0.4); }
+.gz-2  { background: rgba(30,144,255,0.20);  border: 0.5px solid rgba(30,144,255,0.4); }
+.gz-3  { background: rgba(180,0,180,0.20);   border: 0.5px solid rgba(180,0,180,0.4); }
+.gz-4  { background: rgba(0,180,180,0.20);   border: 0.5px solid rgba(0,180,180,0.4); }
+.gz-5  { background: rgba(255,100,20,0.20);  border: 0.5px solid rgba(255,100,20,0.4); }
+.gz-6  { background: rgba(210,210,0,0.20);   border: 0.5px solid rgba(210,210,0,0.4); }
+.gz-7  { background: rgba(255,105,180,0.20); border: 0.5px solid rgba(255,105,180,0.4); }
+.gz-8  { background: rgba(64,224,208,0.20);  border: 0.5px solid rgba(64,224,208,0.4); }
+.gz-9  { background: rgba(160,82,45,0.22);   border: 0.5px solid rgba(160,82,45,0.45); }
+.gz-10 { background: rgba(100,149,237,0.20); border: 0.5px solid rgba(100,149,237,0.4); }
+.gz-11 { background: rgba(144,238,144,0.20); border: 0.5px solid rgba(144,238,144,0.4); }
+
+.group-zone-title {
+  grid-column: 1/-1; font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.05rem; letter-spacing: 0.18em; color: rgba(255,255,255,0.6);
+  padding: 4px 2px 2px;
+}
+.cat-header {
+  grid-column: 1/-1; font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 6px 4px 3px; display: flex; align-items: center; gap: 7px; color: rgba(255,255,255,0.9);
+}
+.cat-flag { display: flex; align-items: center; flex-shrink: 0; }
+.cat-flag img { border-radius: 2px; display: block; }
+.cat-name { flex: 1; }
+.cat-group-label { font-size: 0.58rem; letter-spacing: 0.2em; opacity: 0.6; }
+
+.gz-special .cat-header { color: var(--gold); }
+.gz-0  .cat-header { color: #ffaaaa; }
+.gz-1  .cat-header { color: #ffd580; }
+.gz-2  .cat-header { color: #88c8ff; }
+.gz-3  .cat-header { color: #e888e8; }
+.gz-4  .cat-header { color: #66e0e0; }
+.gz-5  .cat-header { color: #ffb070; }
+.gz-6  .cat-header { color: #eeee66; }
+.gz-7  .cat-header { color: #ffb8d8; }
+.gz-8  .cat-header { color: #80f0e0; }
+.gz-9  .cat-header { color: #d4a070; }
+.gz-10 .cat-header { color: #b0c8ff; }
+.gz-11 .cat-header { color: #a0eea0; }
+
+/* CELLS */
+.cell {
+  border-radius: 8px; border: 1px solid rgba(255,255,255,0.32);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; padding: 4px 2px; min-height: 52px;
+  background: rgba(0,0,0,0.38);
+  transition: transform 0.1s, background 0.15s;
+  user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.cell:active { transform: scale(0.93); }
+.cell.have { background: rgba(255,255,255,0.45); border-color: rgba(255,255,255,0.8); }
+.cell.dupe { background: rgba(240,165,0,0.68); border-color: rgba(240,165,0,0.95); }
+.cell.hidden { display: none; }
+
+.cnum { font-size: 9px; color: rgba(255,255,255,0.72); line-height: 1.2; font-family: 'Barlow', sans-serif; }
+.cell.have .cnum { color: rgba(0,30,0,0.65); }
+.cell.dupe .cnum { color: rgba(60,30,0,0.8); }
+.ccount { font-family: 'Bebas Neue', sans-serif; font-size: 16px; line-height: 1.2; color: rgba(255,255,255,0.52); }
+.cell.have .ccount { color: #0a1e0a; font-size: 17px; }
+.cell.dupe .ccount { color: #3a2000; font-size: 17px; }
+
+@keyframes bump { 0%{transform:scale(1)} 50%{transform:scale(1.28)} 100%{transform:scale(1)} }
+.cell.bump { animation: bump 0.2s ease; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: max(24px,env(safe-area-inset-bottom)); left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: rgba(10,30,15,0.96); border: 1px solid var(--gold); border-radius: 10px;
+  padding: 10px 20px; font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.9rem; letter-spacing: 0.08em; color: var(--gold);
+  opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s;
+  z-index: 100; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* FOOTER */
+footer { text-align: center; margin-top: 28px; font-size: 0.72rem; color: rgba(255,255,255,0.2); letter-spacing: 0.08em; }
+
+/* MOBILE */
+@media (max-width: 500px) {
+  h1 { font-size: 2rem; }
+  .gz-special, .group-zone { grid-template-columns: repeat(auto-fill, minmax(52px,1fr)); gap: 5px; }
+  .cell { min-height: 56px; }
+  .controls { gap: 6px; padding: 10px 12px; }
+  select { font-size: 0.9rem; height: 40px; }
+  .btn { height: 40px; padding: 0 12px; font-size: 0.85rem; }
+  #grid { max-height: none; }
+  .stat-card { padding: 10px 14px; min-width: 88px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="bg-gradient"></div>
+  <div class="bg-pitch"></div>
+  <div class="bg-lines"></div>
+  <div class="bg-circle"></div>
+  <div id="balls"></div>
+  <div id="stars"></div>
+</div>
+
+<div class="wrapper">
+  <header>
+    <div class="trophy-row">
+      <span class="trophy-icon">🏆</span>
+      <h1>ÁLBUM <span>MUNDIAL</span> 2026</h1>
+      <span class="trophy-icon">🏆</span>
+    </div>
+    <p class="subtitle">Colección Panini · 980 cromos</p>
+    <div class="hosts">🇺🇸 🇨🇦 🇲🇽</div>
+  </header>
+
+  <div class="redbar"></div>
+
+  <div class="stats-row">
+    <div class="stat-card stat-unique">
+      <div class="stat-label">Únicos</div>
+      <div class="stat-value" id="sUnique">0</div>
+      <div class="stat-label">de 980</div>
+    </div>
+    <div class="stat-card stat-dupe">
+      <div class="stat-label">Repetidos</div>
+      <div class="stat-value" id="sDupes">0</div>
+    </div>
+    <div class="stat-card stat-missing">
+      <div class="stat-label">Faltan</div>
+      <div class="stat-value" id="sMissing">980</div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0% completado</div>
+  </div>
+
+  <div class="controls">
+    <div class="sel-group">
+      <label class="sel-label">Categoría</label>
+      <select id="catSel"></select>
+    </div>
+    <div class="sel-group" id="numGroup">
+      <label class="sel-label">Número</label>
+      <select id="numSel"></select>
+    </div>
+    <div class="sel-preview" id="selPreview">—</div>
+    <button class="btn btn-add" id="addBtn">+ Agregar</button>
+    <button class="btn btn-remove" id="removeBtn">− Quitar</button>
+    <div class="filters">
+      <button class="fBtn active" data-f="all">Todos</button>
+      <button class="fBtn" data-f="have">Tengo</button>
+      <button class="fBtn" data-f="dupe">Repetidos</button>
+      <button class="fBtn" data-f="none">Faltan</button>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot leg-none"></div>Sin cromo</div>
+    <div class="leg-item"><div class="leg-dot leg-have"></div>1 cromo</div>
+    <div class="leg-item"><div class="leg-dot leg-dupe"></div>Repetido (2+)</div>
+  </div>
+
+  <div id="grid" role="grid" aria-label="Cuadrícula de 980 cromos del Mundial 2026"></div>
+
+  <footer>Panini FIFA World Cup 2026™ · Tracker personal · Los datos se guardan en este dispositivo</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CATALOGUE ────────────────────────────────────────────────────
+const TEAMS = ['MEX','RSA','COR','CZE','CAN','BIH','QAT','SUI','BRA','MAR','HAI','SCO','USA','PAR',
+  'AUS','TUR','GER','CUW','CIV','ECU','NED','JPN','SWE','TUN','BEL','EGV','IRN','NZL','ESP','CPV',
+  'KSA','URU','FRA','SEN','IRQ','NOR','ARG','ALG','AUT','JOR','POR','COD','UZB','COL','ENG','CRO','GHA','PAN'];
+
+const CATALOGUE = [];
+CATALOGUE.push({ id:'00', cat:'00', num:0 });
+for (let n=1; n<=19; n++) CATALOGUE.push({ id:`FWC ${n}`, cat:'FWC', num:n });
+for (const t of TEAMS)
+  for (let n=1; n<=20; n++)
+    CATALOGUE.push({ id:`${t} ${n}`, cat:t, num:n });
+
+CATALOGUE.forEach((s,i) => s.idx = i);
+const BY_ID = {};
+CATALOGUE.forEach(s => BY_ID[s.id] = s);
+const TOTAL = CATALOGUE.length; // 980
+
+// ── FLAGS ────────────────────────────────────────────────────────
+const FLAG = {
+  MEX:'mx',RSA:'za',COR:'kr',CZE:'cz',CAN:'ca',BIH:'ba',QAT:'qa',SUI:'ch',
+  BRA:'br',MAR:'ma',HAI:'ht',SCO:'gb-sct',USA:'us',PAR:'py',AUS:'au',TUR:'tr',
+  GER:'de',CUW:'cw',CIV:'ci',ECU:'ec',NED:'nl',JPN:'jp',SWE:'se',TUN:'tn',
+  BEL:'be',EGV:'eg',IRN:'ir',NZL:'nz',ESP:'es',CPV:'cv',KSA:'sa',URU:'uy',
+  FRA:'fr',SEN:'sn',IRQ:'iq',NOR:'no',ARG:'ar',ALG:'dz',AUT:'at',JOR:'jo',
+  POR:'pt',COD:'cd',UZB:'uz',COL:'co',ENG:'gb-eng',CRO:'hr',GHA:'gh',PAN:'pa'
+};
+function flagImg(code) {
+  const iso = FLAG[code];
+  if (!iso) return '';
+  return `<img src="https://flagcdn.com/24x18/${iso}.png" width="24" height="18" alt="${code}" style="border-radius:2px;display:block;" loading="lazy">`;
+}
+
+// ── STATE ────────────────────────────────────────────────────────
+let counts = new Array(TOTAL).fill(0);
+let filter = 'all';
+
+// ── STATIC BG DECORATIONS ────────────────────────────────────────
+const ballSVG = sz => `<svg width="${sz}" height="${sz}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="white" stroke="#ccc" stroke-width="1"/><polygon points="50,14 62,36 86,36 68,52 74,76 50,62 26,76 32,52 14,36 38,36" fill="#222" opacity="0.82"/><circle cx="50" cy="50" r="48" fill="none" stroke="#bbb" stroke-width="2"/></svg>`;
+const ballsEl = document.getElementById('balls');
+for (let i=0; i<16; i++) {
+  const sz = 22+Math.floor(Math.random()*52);
+  const d = document.createElement('div');
+  d.className = 'ball'; d.innerHTML = ballSVG(sz);
+  d.style.cssText = `left:${Math.random()*94}%;top:${Math.random()*94}%;width:${sz}px;height:${sz}px;--op:${0.07+Math.random()*0.14};--rot:${Math.floor(Math.random()*360)}deg;`;
+  ballsEl.appendChild(d);
+}
+const starsEl = document.getElementById('stars');
+for (let i=0; i<28; i++) {
+  const s = document.createElement('div');
+  s.className='star'; s.textContent='★';
+  s.style.cssText=`left:${Math.random()*97}%;top:${Math.random()*97}%;--sz:${8+Math.floor(Math.random()*16)}px;--op:${0.12+Math.random()*0.28};`;
+  starsEl.appendChild(s);
+}
+
+// ── SELECTORS ────────────────────────────────────────────────────
+const catSel = document.getElementById('catSel');
+const numSel = document.getElementById('numSel');
+const preview = document.getElementById('selPreview');
+
+const ALL_CATS = ['00','FWC',...TEAMS];
+ALL_CATS.forEach(c => {
+  const o = document.createElement('option');
+  o.value = c; o.textContent = c;
+  catSel.appendChild(o);
+});
+
+function buildNumOptions() {
+  numSel.innerHTML = '';
+  const cat = catSel.value;
+  if (cat === '00') {
+    numSel.appendChild(Object.assign(document.createElement('option'), {value:0, textContent:'—'}));
+    document.getElementById('numGroup').style.visibility = 'hidden';
+  } else {
+    document.getElementById('numGroup').style.visibility = 'visible';
+    const max = cat === 'FWC' ? 19 : 20;
+    for (let n=1; n<=max; n++) {
+      numSel.appendChild(Object.assign(document.createElement('option'), {value:n, textContent:n}));
+    }
+  }
+  updatePreview();
+}
+
+function updatePreview() {
+  const cat = catSel.value;
+  preview.textContent = cat === '00' ? '00' : `${cat} ${numSel.value}`;
+}
+
+catSel.addEventListener('change', buildNumOptions);
+numSel.addEventListener('change', updatePreview);
+
+// ── GRID BUILD ───────────────────────────────────────────────────
+const grid = document.getElementById('grid');
+const cells = [];
+const GROUP_LETTERS = 'ABCDEFGHIJKL'.split('');
+
+function makeZone(cls) {
+  const z = document.createElement('div'); z.className = cls; grid.appendChild(z); return z;
+}
+function addCatHeader(zone, cat, groupLabel) {
+  const hdr = document.createElement('div');
+  hdr.className = 'cat-header'; hdr.dataset.cat = cat;
+  const flag = (cat === '00' || cat === 'FWC') ? '' : flagImg(cat);
+  hdr.innerHTML = flag
+    ? `<span class="cat-flag">${flag}</span><span class="cat-name">${cat}</span><span class="cat-group-label">${groupLabel}</span>`
+    : `<span class="cat-name">${cat === '00' ? 'Portada' : cat}</span><span class="cat-group-label">${groupLabel}</span>`;
+  zone.appendChild(hdr);
+}
+function addCells(zone, stickers) {
+  stickers.forEach(s => {
+    const d = document.createElement('div');
+    d.className = 'cell'; d.dataset.idx = s.idx; d.dataset.cat = s.cat;
+    d.setAttribute('aria-label', `Cromo ${s.id}`);
+    d.innerHTML = `<span class="cnum">${s.num===0?'00':s.num}</span><span class="ccount">—</span>`;
+    d.addEventListener('click', () => {
+      catSel.value = s.cat; buildNumOptions();
+      if (s.cat !== '00') numSel.value = s.num;
+      updatePreview();
+    });
+    zone.appendChild(d); cells.push(d);
+  });
+}
+
+// Special zone: 00 + FWC
+const specialZone = makeZone('gz-special');
+addCatHeader(specialZone, '00', '');
+addCells(specialZone, CATALOGUE.filter(s => s.cat === '00'));
+addCatHeader(specialZone, 'FWC', 'FIFA World Cup');
+addCells(specialZone, CATALOGUE.filter(s => s.cat === 'FWC'));
+
+// Team group zones
+for (let g=0; g<12; g++) {
+  const groupTeams = TEAMS.slice(g*4, g*4+4);
+  const zone = makeZone(`group-zone gz-${g}`);
+  const title = document.createElement('div');
+  title.className = 'group-zone-title'; title.textContent = `Grupo ${GROUP_LETTERS[g]}`;
+  zone.appendChild(title);
+  groupTeams.forEach(team => {
+    addCatHeader(zone, team, `Grupo ${GROUP_LETTERS[g]}`);
+    addCells(zone, CATALOGUE.filter(s => s.cat === team));
+  });
+}
+
+// Init selectors AFTER grid is built
+buildNumOptions();
+
+// ── CELL UPDATE ──────────────────────────────────────────────────
+function updateCell(idx) {
+  const c = counts[idx], d = cells[idx], cc = d.querySelector('.ccount');
+  d.classList.remove('have','dupe');
+  if (c===0) { cc.textContent='—'; }
+  else if (c===1) { d.classList.add('have'); cc.textContent='1'; }
+  else { d.classList.add('dupe'); cc.textContent=c; }
+  applyFilterCell(d, idx);
+}
+function applyFilterCell(d, idx) {
+  const c = counts[idx];
+  const show = filter==='all'
+    || (filter==='have' && c>=1)
+    || (filter==='dupe' && c>=2)
+    || (filter==='none' && c===0);
+  d.classList.toggle('hidden', !show);
+}
+function applyAllFilters() {
+  cells.forEach((d,i) => applyFilterCell(d,i));
+  document.querySelectorAll('.cat-header').forEach(hdr => {
+    if (filter==='all') { hdr.classList.remove('hidden'); return; }
+    const cat = hdr.dataset.cat;
+    const any = cells.some(d => {
+      if (d.dataset.cat !== cat) return false;
+      const c = counts[parseInt(d.dataset.idx)];
+      return (filter==='have'&&c>=1)||(filter==='dupe'&&c>=2)||(filter==='none'&&c===0);
+    });
+    hdr.classList.toggle('hidden', !any);
+  });
+  document.querySelectorAll('.group-zone,.gz-special').forEach(zone => {
+    if (filter==='all') { zone.classList.remove('hidden'); return; }
+    const any = Array.from(zone.querySelectorAll('.cell')).some(d => {
+      const c = counts[parseInt(d.dataset.idx)];
+      return (filter==='have'&&c>=1)||(filter==='dupe'&&c>=2)||(filter==='none'&&c===0);
+    });
+    zone.classList.toggle('hidden', !any);
+  });
+}
+function updateStats() {
+  let unique=0, dupes=0;
+  for (let i=0; i<TOTAL; i++) {
+    if (counts[i]>=1) unique++;
+    if (counts[i]>=2) dupes += counts[i]-1;
+  }
+  const pct = Math.round((unique/TOTAL)*100);
+  document.getElementById('sUnique').textContent = unique;
+  document.getElementById('sDupes').textContent = dupes;
+  document.getElementById('sMissing').textContent = TOTAL-unique;
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressLabel').textContent = pct+'% completado';
+}
+function bump(idx) {
+  const d = cells[idx];
+  d.classList.remove('bump'); void d.offsetWidth; d.classList.add('bump');
+  d.addEventListener('animationend', () => d.classList.remove('bump'), {once:true});
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// ── ACTIONS ──────────────────────────────────────────────────────
+function selectedId() {
+  const cat = catSel.value;
+  return cat==='00' ? '00' : `${cat} ${numSel.value}`;
+}
+document.getElementById('addBtn').addEventListener('click', () => {
+  const s = BY_ID[selectedId()]; if (!s) return;
+  counts[s.idx]++; updateCell(s.idx); updateStats(); save(); bump(s.idx);
+  showToast(`${s.id} — tienes ${counts[s.idx]}`);
+  cells[s.idx].scrollIntoView({block:'nearest', behavior:'smooth'});
+});
+document.getElementById('removeBtn').addEventListener('click', () => {
+  const s = BY_ID[selectedId()]; if (!s||counts[s.idx]===0) return;
+  counts[s.idx]--; updateCell(s.idx); updateStats(); save();
+  showToast(counts[s.idx]===0 ? `${s.id} — ninguno` : `${s.id} — tienes ${counts[s.idx]}`);
+});
+document.querySelectorAll('.fBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.fBtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); filter = btn.dataset.f; applyAllFilters();
+  });
+});
+
+// ── STORAGE ──────────────────────────────────────────────────────
+function save() {
+  try { localStorage.setItem('panini2026v2', JSON.stringify(counts)); } catch(e) {}
+}
+function load() {
+  try {
+    const raw = localStorage.getItem('panini2026v2');
+    if (raw) { const arr=JSON.parse(raw); arr.forEach((v,i)=>{ if(i<TOTAL) counts[i]=v||0; }); }
+  } catch(e) {}
+  for (let i=0; i<TOTAL; i++) updateCell(i);
+  updateStats();
+}
+load();
+</script>
+</body>
+</html>
