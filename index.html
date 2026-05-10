@@ -139,6 +139,43 @@ select:focus { border-color: var(--gold); background: rgba(240,165,0,0.14); }
 select option { background: #1a4a2e; color: var(--white); }
 #catSel { min-width: 100px; }
 #numSel { min-width: 68px; }
+ 
+/* CUSTOM FLAG DROPDOWN */
+.custom-sel { position: relative; min-width: 130px; }
+.custom-sel-trigger {
+  display: flex; align-items: center; gap: 7px;
+  height: 42px; padding: 0 10px;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 10px; color: var(--white); cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 600;
+  letter-spacing: 0.05em; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.custom-sel-trigger:active { background: rgba(240,165,0,0.14); }
+.custom-sel.open .custom-sel-trigger { border-color: var(--gold); background: rgba(240,165,0,0.14); }
+.cs-text { flex: 1; }
+.cs-arrow { font-size: 0.7rem; opacity: 0.6; }
+.cs-flag img { border-radius: 2px; display: block; }
+ 
+.custom-sel-list {
+  display: none;
+  position: absolute; top: calc(100% + 4px); left: 0;
+  min-width: 170px; max-height: 240px; overflow-y: auto;
+  background: #0d3520; border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px; z-index: 200;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+.custom-sel.open .custom-sel-list { display: block; }
+.cs-option {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 12px; cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 0.95rem; font-weight: 600;
+  letter-spacing: 0.06em; color: var(--white);
+  -webkit-tap-highlight-color: transparent;
+}
+.cs-option:hover, .cs-option.selected { background: rgba(240,165,0,0.18); color: var(--gold); }
+.cs-option img { border-radius: 2px; flex-shrink: 0; }
 .sel-preview {
   font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.08em;
   color: var(--gold); min-width: 76px; text-align: center; padding-bottom: 4px;
@@ -359,7 +396,14 @@ footer { text-align: center; margin-top: 28px; font-size: 0.72rem; color: rgba(2
   <div class="controls">
     <div class="sel-group">
       <label class="sel-label">Categoría</label>
-      <select id="catSel"></select>
+      <div class="custom-sel" id="catDrop">
+        <div class="custom-sel-trigger" id="catTrigger">
+          <span class="cs-flag" id="csFlag"></span>
+          <span class="cs-text" id="csText">00</span>
+          <span class="cs-arrow">▾</span>
+        </div>
+        <div class="custom-sel-list" id="catList"></div>
+      </div>
     </div>
     <div class="sel-group" id="numGroup">
       <label class="sel-label">Número</label>
@@ -445,26 +489,59 @@ for (let i=0; i<28; i++) {
 }
  
 // ── SELECTORS ────────────────────────────────────────────────────
-const catSel = document.getElementById('catSel');
 const numSel = document.getElementById('numSel');
 const preview = document.getElementById('selPreview');
+const catTrigger = document.getElementById('catTrigger');
+const catList = document.getElementById('catList');
+const catDrop = document.getElementById('catDrop');
+const csFlag = document.getElementById('csFlag');
+const csText = document.getElementById('csText');
  
-const ALL_CATS = ['00','FWC',...TEAMS];
+let selectedCat = '00';
+ 
+const ALL_CATS = ['00','FWC',...[...TEAMS].sort()];
+ 
+// Build custom dropdown options
 ALL_CATS.forEach(c => {
-  const o = document.createElement('option');
-  o.value = c; o.textContent = c;
-  catSel.appendChild(o);
+  const iso = FLAG[c];
+  const div = document.createElement('div');
+  div.className = 'cs-option'; div.dataset.val = c;
+  const flagHtml = iso ? `<img src="https://flagcdn.com/20x15/${iso}.png" width="20" height="15" alt="${c}">` : '';
+  div.innerHTML = `${flagHtml}<span>${c}</span>`;
+  div.addEventListener('click', () => {
+    selectedCat = c;
+    updateTrigger();
+    catDrop.classList.remove('open');
+    buildNumOptions();
+  });
+  catList.appendChild(div);
 });
+ 
+function updateTrigger() {
+  const iso = FLAG[selectedCat];
+  csFlag.innerHTML = iso ? `<img src="https://flagcdn.com/20x15/${iso}.png" width="20" height="15" alt="${selectedCat}">` : '';
+  csText.textContent = selectedCat;
+  // mark selected
+  catList.querySelectorAll('.cs-option').forEach(o => o.classList.toggle('selected', o.dataset.val === selectedCat));
+}
+ 
+catTrigger.addEventListener('click', (e) => {
+  e.stopPropagation();
+  catDrop.classList.toggle('open');
+});
+document.addEventListener('click', () => catDrop.classList.remove('open'));
+catList.addEventListener('click', e => e.stopPropagation());
+ 
+updateTrigger();
  
 function buildNumOptions() {
   numSel.innerHTML = '';
-  const cat = catSel.value;
-  if (cat === '00') {
+  if (selectedCat === '00') {
     numSel.appendChild(Object.assign(document.createElement('option'), {value:0, textContent:'—'}));
     document.getElementById('numGroup').style.visibility = 'hidden';
   } else {
     document.getElementById('numGroup').style.visibility = 'visible';
-    const max = cat === 'FWC' ? 19 : 20;
+    const max = selectedCat === 'FWC' ? 19 : 20;
     for (let n=1; n<=max; n++) {
       numSel.appendChild(Object.assign(document.createElement('option'), {value:n, textContent:n}));
     }
@@ -473,11 +550,9 @@ function buildNumOptions() {
 }
  
 function updatePreview() {
-  const cat = catSel.value;
-  preview.textContent = cat === '00' ? '00' : `${cat} ${numSel.value}`;
+  preview.textContent = selectedCat === '00' ? '00' : `${selectedCat} ${numSel.value}`;
 }
  
-catSel.addEventListener('change', buildNumOptions);
 numSel.addEventListener('change', updatePreview);
  
 // ── GRID BUILD ───────────────────────────────────────────────────
@@ -504,7 +579,7 @@ function addCells(zone, stickers) {
     d.setAttribute('aria-label', `Cromo ${s.id}`);
     d.innerHTML = `<span class="cnum">${s.num===0?'00':s.num}</span><span class="ccount">—</span>`;
     d.addEventListener('click', () => {
-      catSel.value = s.cat; buildNumOptions();
+      selectedCat = s.cat; updateTrigger(); buildNumOptions();
       if (s.cat !== '00') numSel.value = s.num;
       updatePreview();
     });
@@ -605,8 +680,7 @@ function showToast(msg) {
  
 // ── ACTIONS ──────────────────────────────────────────────────────
 function selectedId() {
-  const cat = catSel.value;
-  return cat==='00' ? '00' : `${cat} ${numSel.value}`;
+  return selectedCat === '00' ? '00' : `${selectedCat} ${numSel.value}`;
 }
 document.getElementById('addBtn').addEventListener('click', () => {
   const s = BY_ID[selectedId()]; if (!s) return;
