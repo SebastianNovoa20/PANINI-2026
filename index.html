@@ -24,7 +24,7 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
 }
-
+ 
 /* BG */
 .bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
 .bg-gradient {
@@ -51,7 +51,7 @@ body {
 }
 .ball { position: absolute; opacity: var(--op,0.12); pointer-events: none; transform: rotate(var(--rot,0deg)); }
 .star { position: absolute; opacity: var(--op,0.25); font-size: var(--sz,14px); color: #FFD166; }
-
+ 
 /* LAYOUT */
 .wrapper {
   position: relative; z-index: 1;
@@ -60,7 +60,7 @@ body {
   padding-left: max(16px,env(safe-area-inset-left));
   padding-right: max(16px,env(safe-area-inset-right));
 }
-
+ 
 /* HEADER */
 header { text-align: center; padding: 32px 0 20px; }
 .trophy-row { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 6px; }
@@ -78,12 +78,30 @@ h1 span { color: var(--gold); text-shadow: 0 0 30px rgba(240,165,0,0.6); }
   color: var(--gray); margin-top: 4px;
 }
 .hosts { display: flex; justify-content: center; gap: 10px; margin-top: 10px; font-size: 1.1rem; }
+.collection-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  background: rgba(0,0,0,0.88);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  border-radius: 6px;
+  padding: 6px 24px 8px;
+}
+.collection-label, .collection-sub {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 7vw, 3.2rem);
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  line-height: 1;
+  text-shadow: none;
+}
 .redbar {
   height: 3px;
   background: linear-gradient(90deg, transparent, var(--red), var(--gold), var(--red), transparent);
   margin: 20px 0; border-radius: 2px;
 }
-
+ 
 /* STATS */
 .stats-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
 .stat-card {
@@ -95,12 +113,12 @@ h1 span { color: var(--gold); text-shadow: 0 0 30px rgba(240,165,0,0.6); }
 .stat-unique .stat-value { color: #fff; }
 .stat-dupe   .stat-value { color: var(--gold); }
 .stat-missing .stat-value { color: #FF6B6B; }
-
+ 
 .progress-wrap { margin: 0 0 18px; }
 .progress-bar-bg { height: 8px; background: rgba(0,0,0,0.25); border-radius: 4px; overflow: hidden; }
 .progress-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--red), var(--gold)); transition: width 0.4s ease; width: 0%; }
 .progress-label { text-align: right; font-size: 0.75rem; color: var(--gray); margin-top: 4px; }
-
+ 
 /* CONTROLS */
 .controls {
   display: flex; align-items: flex-end; gap: 8px; flex-wrap: wrap;
@@ -148,15 +166,15 @@ select option { background: #1a4a2e; color: var(--white); }
 }
 .fBtn:hover { color: var(--white); border-color: rgba(255,255,255,0.35); }
 .fBtn.active { background: var(--gold); color: #1a2e0a; border-color: var(--gold); }
-
+ 
 /* LEGEND */
 .legend { display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
 .leg-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--gray); }
 .leg-dot { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; }
 .leg-none { background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.28); }
-.leg-have { background: rgba(255,255,255,0.42); border: 1px solid rgba(255,255,255,0.6); }
-.leg-dupe { background: rgba(240,165,0,0.65); border: 1px solid rgba(240,165,0,0.9); }
-
+.leg-have { background: rgba(255,255,255,0.28); border: 1px solid rgba(255,255,255,0.6); }
+.leg-dupe { background: rgba(0,0,0,0.45); border: 2px solid rgba(240,165,0,0.9); }
+ 
 /* GRID OUTER */
 #grid {
   display: flex; flex-direction: column; gap: 0;
@@ -167,7 +185,7 @@ select option { background: #1a4a2e; color: var(--white); }
 }
 #grid::-webkit-scrollbar { width: 4px; }
 #grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
-
+ 
 /* GROUP ZONES */
 .gz-special, .group-zone {
   display: grid;
@@ -190,7 +208,7 @@ select option { background: #1a4a2e; color: var(--white); }
 .gz-9  { background: rgba(160,82,45,0.22);   border: 0.5px solid rgba(160,82,45,0.45); }
 .gz-10 { background: rgba(100,149,237,0.20); border: 0.5px solid rgba(100,149,237,0.4); }
 .gz-11 { background: rgba(144,238,144,0.20); border: 0.5px solid rgba(144,238,144,0.4); }
-
+ 
 .group-zone-title {
   grid-column: 1/-1; font-family: 'Bebas Neue', sans-serif;
   font-size: 1.05rem; letter-spacing: 0.18em; color: rgba(255,255,255,0.6);
@@ -205,7 +223,7 @@ select option { background: #1a4a2e; color: var(--white); }
 .cat-flag img { border-radius: 2px; display: block; }
 .cat-name { flex: 1; }
 .cat-group-label { font-size: 0.58rem; letter-spacing: 0.2em; opacity: 0.6; }
-
+ 
 .gz-special .cat-header { color: var(--gold); }
 .gz-0  .cat-header { color: #ffaaaa; }
 .gz-1  .cat-header { color: #ffd580; }
@@ -219,7 +237,7 @@ select option { background: #1a4a2e; color: var(--white); }
 .gz-9  .cat-header { color: #d4a070; }
 .gz-10 .cat-header { color: #b0c8ff; }
 .gz-11 .cat-header { color: #a0eea0; }
-
+ 
 /* CELLS */
 .cell {
   border-radius: 8px; border: 1px solid rgba(255,255,255,0.32);
@@ -230,20 +248,37 @@ select option { background: #1a4a2e; color: var(--white); }
   user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 }
 .cell:active { transform: scale(0.93); }
-.cell.have { background: rgba(255,255,255,0.45); border-color: rgba(255,255,255,0.8); }
-.cell.dupe { background: rgba(240,165,0,0.68); border-color: rgba(240,165,0,0.95); }
+.cell.have {
+  background: rgba(255,255,255,0.28);
+  border-color: rgba(255,255,255,0.6);
+}
+.cell.dupe {
+  background: rgba(0,0,0,0.45);
+  border-color: rgba(240,165,0,0.9);
+  border-width: 2px;
+}
 .cell.hidden { display: none; }
-
+ 
 .cnum { font-size: 9px; color: rgba(255,255,255,0.72); line-height: 1.2; font-family: 'Barlow', sans-serif; }
-.cell.have .cnum { color: rgba(0,30,0,0.65); }
-.cell.dupe .cnum { color: rgba(60,30,0,0.8); }
+.cell.have .cnum { color: rgba(255,255,255,0.8); }
+.cell.dupe .cnum { color: rgba(255,255,255,0.6); }
+ 
 .ccount { font-family: 'Bebas Neue', sans-serif; font-size: 16px; line-height: 1.2; color: rgba(255,255,255,0.52); }
-.cell.have .ccount { color: #0a1e0a; font-size: 17px; }
-.cell.dupe .ccount { color: #3a2000; font-size: 17px; }
-
+.cell.have .ccount { display: none; }
+.cell.dupe .ccount {
+  font-size: 15px; font-weight: 700;
+  background: var(--gold);
+  color: #2a1500;
+  border-radius: 10px;
+  padding: 1px 7px;
+  min-width: 24px;
+  text-align: center;
+  margin-top: 2px;
+}
+ 
 @keyframes bump { 0%{transform:scale(1)} 50%{transform:scale(1.28)} 100%{transform:scale(1)} }
 .cell.bump { animation: bump 0.2s ease; }
-
+ 
 /* TOAST */
 .toast {
   position: fixed; bottom: max(24px,env(safe-area-inset-bottom)); left: 50%;
@@ -255,10 +290,10 @@ select option { background: #1a4a2e; color: var(--white); }
   z-index: 100; white-space: nowrap;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
+ 
 /* FOOTER */
 footer { text-align: center; margin-top: 28px; font-size: 0.72rem; color: rgba(255,255,255,0.2); letter-spacing: 0.08em; }
-
+ 
 /* MOBILE */
 @media (max-width: 500px) {
   h1 { font-size: 2rem; }
@@ -273,7 +308,7 @@ footer { text-align: center; margin-top: 28px; font-size: 0.72rem; color: rgba(2
 </style>
 </head>
 <body>
-
+ 
 <div class="bg">
   <div class="bg-gradient"></div>
   <div class="bg-pitch"></div>
@@ -282,7 +317,7 @@ footer { text-align: center; margin-top: 28px; font-size: 0.72rem; color: rgba(2
   <div id="balls"></div>
   <div id="stars"></div>
 </div>
-
+ 
 <div class="wrapper">
   <header>
     <div class="trophy-row">
@@ -292,10 +327,14 @@ footer { text-align: center; margin-top: 28px; font-size: 0.72rem; color: rgba(2
     </div>
     <p class="subtitle">Colección Panini · 980 cromos</p>
     <div class="hosts">🇺🇸 🇨🇦 🇲🇽</div>
+    <div class="collection-name">
+      <span class="collection-label">NOVOA'S</span>
+      <span class="collection-sub">COLLECTION</span>
+    </div>
   </header>
-
+ 
   <div class="redbar"></div>
-
+ 
   <div class="stats-row">
     <div class="stat-card stat-unique">
       <div class="stat-label">Únicos</div>
@@ -311,12 +350,12 @@ footer { text-align: center; margin-top: 28px; font-size: 0.72rem; color: rgba(2
       <div class="stat-value" id="sMissing">980</div>
     </div>
   </div>
-
+ 
   <div class="progress-wrap">
     <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
     <div class="progress-label" id="progressLabel">0% completado</div>
   </div>
-
+ 
   <div class="controls">
     <div class="sel-group">
       <label class="sel-label">Categoría</label>
@@ -336,38 +375,38 @@ footer { text-align: center; margin-top: 28px; font-size: 0.72rem; color: rgba(2
       <button class="fBtn" data-f="none">Faltan</button>
     </div>
   </div>
-
+ 
   <div class="legend">
     <div class="leg-item"><div class="leg-dot leg-none"></div>Sin cromo</div>
-    <div class="leg-item"><div class="leg-dot leg-have"></div>1 cromo</div>
-    <div class="leg-item"><div class="leg-dot leg-dupe"></div>Repetido (2+)</div>
+    <div class="leg-item"><div class="leg-dot leg-have"></div>En álbum</div>
+    <div class="leg-item"><div class="leg-dot leg-dupe"></div>Repetidos (×1, ×2…)</div>
   </div>
-
+ 
   <div id="grid" role="grid" aria-label="Cuadrícula de 980 cromos del Mundial 2026"></div>
-
+ 
   <footer>Panini FIFA World Cup 2026™ · Tracker personal · Los datos se guardan en este dispositivo</footer>
 </div>
-
+ 
 <div class="toast" id="toast"></div>
-
+ 
 <script>
 // ── CATALOGUE ────────────────────────────────────────────────────
 const TEAMS = ['MEX','RSA','COR','CZE','CAN','BIH','QAT','SUI','BRA','MAR','HAI','SCO','USA','PAR',
   'AUS','TUR','GER','CUW','CIV','ECU','NED','JPN','SWE','TUN','BEL','EGV','IRN','NZL','ESP','CPV',
   'KSA','URU','FRA','SEN','IRQ','NOR','ARG','ALG','AUT','JOR','POR','COD','UZB','COL','ENG','CRO','GHA','PAN'];
-
+ 
 const CATALOGUE = [];
 CATALOGUE.push({ id:'00', cat:'00', num:0 });
 for (let n=1; n<=19; n++) CATALOGUE.push({ id:`FWC ${n}`, cat:'FWC', num:n });
 for (const t of TEAMS)
   for (let n=1; n<=20; n++)
     CATALOGUE.push({ id:`${t} ${n}`, cat:t, num:n });
-
+ 
 CATALOGUE.forEach((s,i) => s.idx = i);
 const BY_ID = {};
 CATALOGUE.forEach(s => BY_ID[s.id] = s);
 const TOTAL = CATALOGUE.length; // 980
-
+ 
 // ── FLAGS ────────────────────────────────────────────────────────
 const FLAG = {
   MEX:'mx',RSA:'za',COR:'kr',CZE:'cz',CAN:'ca',BIH:'ba',QAT:'qa',SUI:'ch',
@@ -382,11 +421,11 @@ function flagImg(code) {
   if (!iso) return '';
   return `<img src="https://flagcdn.com/24x18/${iso}.png" width="24" height="18" alt="${code}" style="border-radius:2px;display:block;" loading="lazy">`;
 }
-
+ 
 // ── STATE ────────────────────────────────────────────────────────
 let counts = new Array(TOTAL).fill(0);
 let filter = 'all';
-
+ 
 // ── STATIC BG DECORATIONS ────────────────────────────────────────
 const ballSVG = sz => `<svg width="${sz}" height="${sz}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="white" stroke="#ccc" stroke-width="1"/><polygon points="50,14 62,36 86,36 68,52 74,76 50,62 26,76 32,52 14,36 38,36" fill="#222" opacity="0.82"/><circle cx="50" cy="50" r="48" fill="none" stroke="#bbb" stroke-width="2"/></svg>`;
 const ballsEl = document.getElementById('balls');
@@ -404,19 +443,19 @@ for (let i=0; i<28; i++) {
   s.style.cssText=`left:${Math.random()*97}%;top:${Math.random()*97}%;--sz:${8+Math.floor(Math.random()*16)}px;--op:${0.12+Math.random()*0.28};`;
   starsEl.appendChild(s);
 }
-
+ 
 // ── SELECTORS ────────────────────────────────────────────────────
 const catSel = document.getElementById('catSel');
 const numSel = document.getElementById('numSel');
 const preview = document.getElementById('selPreview');
-
+ 
 const ALL_CATS = ['00','FWC',...TEAMS];
 ALL_CATS.forEach(c => {
   const o = document.createElement('option');
   o.value = c; o.textContent = c;
   catSel.appendChild(o);
 });
-
+ 
 function buildNumOptions() {
   numSel.innerHTML = '';
   const cat = catSel.value;
@@ -432,20 +471,20 @@ function buildNumOptions() {
   }
   updatePreview();
 }
-
+ 
 function updatePreview() {
   const cat = catSel.value;
   preview.textContent = cat === '00' ? '00' : `${cat} ${numSel.value}`;
 }
-
+ 
 catSel.addEventListener('change', buildNumOptions);
 numSel.addEventListener('change', updatePreview);
-
+ 
 // ── GRID BUILD ───────────────────────────────────────────────────
 const grid = document.getElementById('grid');
 const cells = [];
 const GROUP_LETTERS = 'ABCDEFGHIJKL'.split('');
-
+ 
 function makeZone(cls) {
   const z = document.createElement('div'); z.className = cls; grid.appendChild(z); return z;
 }
@@ -472,14 +511,14 @@ function addCells(zone, stickers) {
     zone.appendChild(d); cells.push(d);
   });
 }
-
+ 
 // Special zone: 00 + FWC
 const specialZone = makeZone('gz-special');
 addCatHeader(specialZone, '00', '');
 addCells(specialZone, CATALOGUE.filter(s => s.cat === '00'));
 addCatHeader(specialZone, 'FWC', 'FIFA World Cup');
 addCells(specialZone, CATALOGUE.filter(s => s.cat === 'FWC'));
-
+ 
 // Team group zones
 for (let g=0; g<12; g++) {
   const groupTeams = TEAMS.slice(g*4, g*4+4);
@@ -492,17 +531,23 @@ for (let g=0; g<12; g++) {
     addCells(zone, CATALOGUE.filter(s => s.cat === team));
   });
 }
-
+ 
 // Init selectors AFTER grid is built
 buildNumOptions();
-
+ 
 // ── CELL UPDATE ──────────────────────────────────────────────────
 function updateCell(idx) {
   const c = counts[idx], d = cells[idx], cc = d.querySelector('.ccount');
   d.classList.remove('have','dupe');
-  if (c===0) { cc.textContent='—'; }
-  else if (c===1) { d.classList.add('have'); cc.textContent='1'; }
-  else { d.classList.add('dupe'); cc.textContent=c; }
+  if (c === 0) {
+    cc.textContent = '—';
+  } else if (c === 1) {
+    d.classList.add('have');
+    cc.textContent = '';        // blanco puro, sin número
+  } else {
+    d.classList.add('dupe');
+    cc.textContent = '×' + (c - 1);  // repetidos = total - 1
+  }
   applyFilterCell(d, idx);
 }
 function applyFilterCell(d, idx) {
@@ -557,7 +602,7 @@ function showToast(msg) {
   t.textContent = msg; t.classList.add('show');
   clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 1800);
 }
-
+ 
 // ── ACTIONS ──────────────────────────────────────────────────────
 function selectedId() {
   const cat = catSel.value;
@@ -566,13 +611,17 @@ function selectedId() {
 document.getElementById('addBtn').addEventListener('click', () => {
   const s = BY_ID[selectedId()]; if (!s) return;
   counts[s.idx]++; updateCell(s.idx); updateStats(); save(); bump(s.idx);
-  showToast(`${s.id} — tienes ${counts[s.idx]}`);
+  const c = counts[s.idx];
+  const msg = c === 1 ? `${s.id} — en tu álbum ✓` : `${s.id} — ${c-1} repetido${c-1>1?'s':''}`;
+  showToast(msg);
   cells[s.idx].scrollIntoView({block:'nearest', behavior:'smooth'});
 });
 document.getElementById('removeBtn').addEventListener('click', () => {
   const s = BY_ID[selectedId()]; if (!s||counts[s.idx]===0) return;
   counts[s.idx]--; updateCell(s.idx); updateStats(); save();
-  showToast(counts[s.idx]===0 ? `${s.id} — ninguno` : `${s.id} — tienes ${counts[s.idx]}`);
+  const c = counts[s.idx];
+  const msg = c === 0 ? `${s.id} — ninguno` : c === 1 ? `${s.id} — en tu álbum ✓` : `${s.id} — ${c-1} repetido${c-1>1?'s':''}`;
+  showToast(msg);
 });
 document.querySelectorAll('.fBtn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -580,7 +629,7 @@ document.querySelectorAll('.fBtn').forEach(btn => {
     btn.classList.add('active'); filter = btn.dataset.f; applyAllFilters();
   });
 });
-
+ 
 // ── STORAGE ──────────────────────────────────────────────────────
 function save() {
   try { localStorage.setItem('panini2026v2', JSON.stringify(counts)); } catch(e) {}
